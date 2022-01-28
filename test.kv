@@ -1,0 +1,142 @@
+#:import get_color_from_hex kivy.utils.get_color_from_hex
+
+#:set text_color get_color_from_hex("#4a4939")
+#:set focus_color get_color_from_hex("#e7e4c0")
+#:set ripple_color get_color_from_hex("#c5bdd2")
+#:set bg_color get_color_from_hex("#f7f4e7")
+#:set selected_color get_color_from_hex("#0c6c4d")
+
+
+<DrawerClickableItem@MDNavigationDrawerItem>
+    focus_color: focus_color
+    unfocus_color: bg_color
+    text_color: text_color
+    icon_color: text_color
+    ripple_color: ripple_color
+    selected_color: selected_color
+
+
+<DrawerLabelItem@MDNavigationDrawerItem>
+    bg_color: bg_color
+    text_color: text_color
+    icon_color: text_color
+    _no_ripple_effect: True
+
+
+MDScreen:
+
+    MDToolbar:
+        id: toolbar
+        #title: "The last word"
+        elevation: 10
+        pos_hint: {"top": 1}
+        md_bg_color: focus_color
+        specific_text_color: text_color
+        left_action_items:
+            [['menu', lambda x:nav_drawer.set_state("open")  if nav_drawer.state == "close" else nav_drawer.set_state("close")  ]  ]
+
+    MDNavigationLayout:
+        x: toolbar.height
+        ScreenManager:
+
+            id: screen_manager
+            MDScreen:
+
+
+            MDScreen:
+                name: "bible_scr"
+
+                MDLabel:
+                    text: "Read Bible"
+                    halign: "center"
+
+            MDScreen:
+                name: "verse_today_scr"
+
+                MDLabel:
+                    text: "In the beginning God created the heaven and the earth."
+                    text_size: [50,45]
+                    halign: "center"
+
+            MDScreen:
+                name: "tools_scr"
+
+                MDLabel:
+                    text: "Tools"
+                    halign: "center"
+
+            MDScreen:
+                name: "theming_scr"
+
+                MDLabel:
+                    text: "Theming"
+                    halign: "center"
+
+            MDScreen:
+                name: "setting_scr"
+
+                MDLabel:
+                    text: "Settings"
+                    halign: "center"
+
+        MDNavigationDrawer:
+            id: nav_drawer
+            radius: (0, 16, 16, 0) if self.anchor == "left" else (16, 0, 0, 16)
+            md_bg_color: bg_color
+
+            MDNavigationDrawerMenu:
+
+                MDNavigationDrawerHeader:
+                    title: "The Last Word"
+                    title_color: text_color
+                    #text: "v 1.0"
+                    title_color: text_color
+                    spacing: "4dp"
+                    padding: "12dp", 0, 0, "56dp"
+
+                MDNavigationDrawerLabel:
+                    text: "Bible Menu"
+
+                DrawerClickableItem:
+                    icon: "book"
+                    #right_text: "+99"
+                    text_right_color: text_color
+                    text: "Read"
+                    on_press:
+                        nav_drawer.set_state("close")
+                        screen_manager.current = "bible_scr"
+
+                DrawerClickableItem:
+                    icon: "send"
+                    text: "Today Verse"
+                    on_press:
+                        nav_drawer.set_state("close")
+                        screen_manager.current = "verse_today_scr"
+
+                MDNavigationDrawerDivider:
+
+                MDNavigationDrawerLabel:
+                    text: "Misc"
+
+                DrawerClickableItem:
+                    icon: "cog"
+                    #right_text: "+99"
+                    text_right_color: text_color
+                    text: "Settings"
+                    on_press:
+                        nav_drawer.set_state("close")
+                        screen_manager.current = "setting_scr"
+
+                DrawerClickableItem:
+                    icon: "shape"
+                    text: "Theme"
+                    on_press:
+                        nav_drawer.set_state("close")
+                        screen_manager.current = "theming_scr"
+
+                DrawerClickableItem:
+                    icon: "tools"
+                    text: "Tools"
+                    on_press:
+                        nav_drawer.set_state("close")
+                        screen_manager.current = "tools_scr"
