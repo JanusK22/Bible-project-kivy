@@ -36,7 +36,7 @@ MDScreen:
             [['menu', lambda x:nav_drawer.set_state("open")  if nav_drawer.state == "close" else nav_drawer.set_state("close")  ]  ]
 
     MDNavigationLayout:
-        x: toolbar.height
+        #x: toolbar.height
         ScreenManager:
 
             id: screen_manager
@@ -50,12 +50,21 @@ MDScreen:
                     text: "Read Bible"
                     halign: "center"
 
+                MDFloatingActionButtonSpeedDial:
+                    data: app.data
+                    icon: "dots-horizontal"
+                    bg_color_root_button: text_color
+                    bg_color_stack_button: text_color
+                    bg_hint_color: bg_color
+                    hint_animation: True
+
             MDScreen:
                 name: "verse_today_scr"
 
                 MDLabel:
                     text: "In the beginning God created the heaven and the earth."
-                    text_size: [50,45]
+                    theme_text_color: "Custom"
+                    text_color: 120, 0, 1, 1
                     halign: "center"
 
             MDScreen:
@@ -103,6 +112,7 @@ MDScreen:
                     text_right_color: text_color
                     text: "Read"
                     on_press:
+                        toolbar.title = "Read"
                         nav_drawer.set_state("close")
                         screen_manager.current = "bible_scr"
 
@@ -110,6 +120,7 @@ MDScreen:
                     icon: "send"
                     text: "Today Verse"
                     on_press:
+                        toolbar.title = "Today Verse"
                         nav_drawer.set_state("close")
                         screen_manager.current = "verse_today_scr"
 
@@ -124,6 +135,7 @@ MDScreen:
                     text_right_color: text_color
                     text: "Settings"
                     on_press:
+                        toolbar.title = "Settings"
                         nav_drawer.set_state("close")
                         screen_manager.current = "setting_scr"
 
@@ -131,6 +143,7 @@ MDScreen:
                     icon: "shape"
                     text: "Theme"
                     on_press:
+                        toolbar.title = "Theme"
                         nav_drawer.set_state("close")
                         screen_manager.current = "theming_scr"
 
@@ -138,5 +151,6 @@ MDScreen:
                     icon: "tools"
                     text: "Tools"
                     on_press:
+                        toolbar.title = "Tools"
                         nav_drawer.set_state("close")
                         screen_manager.current = "tools_scr"
