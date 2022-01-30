@@ -1,6 +1,10 @@
 # Bible-project-kivy
 A Ui Bible App base on Kivy
 
+Key Features : ( Till now)
+
+* Ability to read a random verse every launch
+* By first launch , automatically import kjv Bible from csv and store it in a sqlite db
 
 First Look !
 
