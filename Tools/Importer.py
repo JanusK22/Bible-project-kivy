@@ -3,6 +3,7 @@ import sqlite3
 import pandas as pd
 
 
+
 class Importer:
     def __init__(self, file, version):
         self.file_name = os.path.splitext(file)[0]

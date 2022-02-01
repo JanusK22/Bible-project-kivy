@@ -1,95 +1,88 @@
+from kivy.animation import Animation
 from kivy.lang import Builder
-from kivy.properties import StringProperty
-from kivy.uix.screenmanager import Screen
-
-from kivymd.icon_definitions import md_icons
+from kivy.properties import StringProperty, get_color_from_hex
 from kivymd.app import MDApp
-from kivymd.uix.list import OneLineIconListItem
+from kivymd.uix.behaviors import RoundedRectangularElevationBehavior
+from kivymd.uix.card import MDCard
+from kivymd.uix.list import TwoLineListItem
+
+from Tools import Creator
+from Tools.Query import Query_sql
 
 
-Builder.load_string(
-    '''
-#:import images_path kivymd.images_path
+class MD3Card(MDCard, RoundedRectangularElevationBehavior):
+    text = StringProperty()
 
 
-<CustomOneLineIconListItem>
-
-    IconLeftWidget:
-        icon: root.icon
+class MyItem(TwoLineListItem):
+    pass
 
 
-<PreviousMDIcons>
+class Bible(MDApp):
+    overlay_color = get_color_from_hex("#6042e4")
 
-    MDBoxLayout:
-        orientation: 'vertical'
-        spacing: dp(10)
-        padding: dp(20)
+    data = {
+        'Version': 'book-multiple',
+        'Jump in': 'debug-step-over',
+        'Search': 'text-search',
+    }
 
-        MDBoxLayout:
-            adaptive_height: True
+    que = Query_sql().random_verse()[0]
+    verse_today = ".".join([str(i) for i in que])
 
-            MDIconButton:
-                icon: 'magnify'
-
-            MDTextField:
-                id: search_field
-                hint_text: 'Search icon'
-                on_text: root.set_list_md_icons(self.text, True)
-
-        RecycleView:
-            id: rv
-            key_viewclass: 'viewclass'
-            key_size: 'height'
-
-            RecycleBoxLayout:
-                padding: dp(10)
-                default_size: None, dp(48)
-                default_size_hint: 1, None
-                size_hint_y: None
-                height: self.minimum_height
-                orientation: 'vertical'
-'''
-)
-
-
-class CustomOneLineIconListItem(OneLineIconListItem):
-    icon = StringProperty()
-
-
-class PreviousMDIcons(Screen):
-
-    def set_list_md_icons(self, text="", search=False):
-        '''Builds a list of icons for the screen MDIcons.'''
-
-        def add_icon_item(name_icon):
-            self.ids.rv.data.append(
-                {
-                    "viewclass": "CustomOneLineIconListItem",
-                    "icon": name_icon,
-                    "text": name_icon,
-                    "callback": lambda x: x,
-                }
-            )
-
-        self.ids.rv.data = []
-        for name_icon in md_icons.keys():
-            if search:
-                if text in name_icon:
-                    add_icon_item(name_icon)
-            else:
-                add_icon_item(name_icon)
-
-
-class MainApp(MDApp):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.screen = PreviousMDIcons()
+    def remove_item(self, instance):
+        self.root.ids.md_list.remove_widget(instance)
 
     def build(self):
-        return self.screen
+        self.theme_cls.primary_palette = "Indigo"
+        self.theme_cls.material_style = "M3"
+
+        return Builder.load_file("test.kv")
 
     def on_start(self):
-        self.screen.set_list_md_icons()
+        que = Query_sql().random_verse()[0]
+        for i in Creator.Read_book("kjv").read_book():
+            self.root.ids.selection_list.add_widget(i)
+
+        verse_today = ".".join([str(i) for i in que])
+        self.root.ids.box.add_widget(
+            MD3Card(
+                line_color=(0.2, 0.2, 0.2, 0.8),
+                style="filled",
+                text=verse_today
+            )
+        )
+
+    def set_selection_mode(self, instance_selection_list, mode):
+        if mode:
+            md_bg_color = self.overlay_color
+            left_action_items = [
+                [
+                    "close",
+                    lambda x: self.root.ids.selection_list.unselected_all(),
+                ]
+            ]
+            right_action_items = [["share"], ["dots-vertical"]]
+        else:
+            md_bg_color = (0, 0, 0, 1)
+            left_action_items = [["menu"]]
+            right_action_items = []
+            self.root.ids.toolbar.title = "KJV version to put"
+
+        Animation(md_bg_color=md_bg_color, d=1).start(self.root.ids.toolbar)
+        self.root.ids.toolbar.left_action_items = left_action_items
+        self.root.ids.toolbar.right_action_items = right_action_items
+
+    def on_selected(self, instance_selection_list, instance_selection_item):
+        self.root.ids.toolbar.title = str(
+            len(instance_selection_list.get_selected_list_items())
+        )
+
+    def on_unselected(self, instance_selection_list, instance_selection_item):
+        if instance_selection_list.get_selected_list_items():
+            self.root.ids.toolbar.title = str(
+                len(instance_selection_list.get_selected_list_items())
+            )
 
 
-MainApp().run()
+Bible().run()

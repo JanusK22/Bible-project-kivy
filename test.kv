@@ -6,6 +6,12 @@
 #:set bg_color get_color_from_hex("#f7f4e7")
 #:set selected_color get_color_from_hex("#0c6c4d")
 
+<MyItem>
+    text: "Book"
+    secondary_text: "Chapter"
+    tertiary_text: "Verse"
+    _no_ripple_effect: True
+
 
 <DrawerClickableItem@MDNavigationDrawerItem>
     focus_color: focus_color
@@ -22,6 +28,30 @@
     icon_color: text_color
     _no_ripple_effect: True
 
+<MD3Card>
+    padding: 16
+    size_hint: None, None
+    md_bg_color: bg_color
+    #size: self.minimum_size
+    size: str(len(root.text)*4)+"dp",str(len(root.text)*1.8)+"dp"
+    #size: content.size
+    pos_hint: {"center_x": .5, "center_y": .5}
+
+    MDRelativeLayout:
+        size_hint: None, None
+        size: root.size
+
+        MDIconButton:
+            icon: "dots-vertical"
+            pos:
+                root.width - (self.width + root.padding[0] + dp(4)), root.height - (self.height + root.padding[0] + dp(4))
+
+        MDLabel:
+            id: label
+            text: root.text
+            color: .2, .2, .2, .8
+
+
 
 MDScreen:
 
@@ -36,7 +66,7 @@ MDScreen:
             [['menu', lambda x:nav_drawer.set_state("open")  if nav_drawer.state == "close" else nav_drawer.set_state("close")  ]  ]
 
     MDNavigationLayout:
-        #x: toolbar.height
+        x: toolbar.height
         ScreenManager:
 
             id: screen_manager
@@ -46,9 +76,29 @@ MDScreen:
             MDScreen:
                 name: "bible_scr"
 
-                MDLabel:
-                    text: "Read Bible"
-                    halign: "center"
+                MDBoxLayout:
+                    orientation: "vertical"
+
+                    MDToolbar:
+                        id: toolbar
+                        title: "KJV"
+
+                    ScrollView:
+
+                        MDSelectionList:
+                            id: selection_list
+                            overlay_color: app.overlay_color[:-1] + [.2]
+                            icon_bg_color: app.overlay_color
+                            icon_pos : [-50,0]
+                            on_selected: app.on_selected(*args)
+                            on_unselected: app.on_unselected(*args)
+                            on_selected_mode: app.set_selection_mode(*args)
+                            progress_round_size:0
+
+
+                #MDLabel:
+                #    text: "Read Bible"
+                #    halign: "center"
 
                 MDFloatingActionButtonSpeedDial:
                     data: app.data
@@ -61,11 +111,18 @@ MDScreen:
             MDScreen:
                 name: "verse_today_scr"
 
-                MDLabel:
-                    text: "In the beginning God created the heaven and the earth."
-                    theme_text_color: "Custom"
-                    text_color: 120, 0, 1, 1
-                    halign: "center"
+                #MDLabel:
+                #    text: app.verse_today
+                #    theme_text_color: "Custom"
+                #    text_color: text_color
+                #    halign: "center"
+
+                MDBoxLayout:
+                    id: box
+                    #adaptive_height: True
+                    adaptive_size: True
+                    spacing: "56dp"
+                    pos_hint: {"center_x": .5, "center_y": .5}
 
             MDScreen:
                 name: "tools_scr"

@@ -2,6 +2,9 @@ import sqlite3
 from sqlite3 import Error
 
 import yaml
+from kivymd.uix.list import ThreeLineListItem, TwoLineListItem, OneLineListItem
+
+from Tools.Query import Query_sql
 
 
 class Creator:
@@ -28,3 +31,24 @@ class Yaml_tools:
     def finder(self, path):
         base, pos = path.split("/")[0], path.split("/")[1]
         return self.file[base][pos]
+
+
+class Read_book:
+    def __init__(self, book):
+        self.book_name = book
+        self.book = Query_sql().book(self.book_name)
+
+    def read_book(self):
+        verse_list = []
+        for row in self.book[:70]:
+            if row[1] == 1 and row[2] == 1:
+                print(row[1], row[2])
+                verse_list.append(ThreeLineListItem(text=row[0].upper() + "\n", secondary_text="Chapter " + str(row[1]),
+                                                    tertiary_text=str(row[2]) + " " + row[3]))
+            elif row[1] != 1 and row[2] == 1:
+                verse_list.append(TwoLineListItem(text="Chapter " + str(row[1]),
+                                                  secondary_text=str(row[2]) + " " + row[3]))
+            else:
+                verse_list.append(OneLineListItem(text=str(row[2]) + " " + row[3]))
+
+        return verse_list
