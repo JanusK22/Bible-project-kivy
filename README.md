@@ -3,7 +3,7 @@ A Ui Bible App base on Kivy ( The last Word)
 
 Key Features : ( Till now)
 
-* Ability to read a random verse every launch
+* Ability to read a random verse by every launch
 * By first launch , automatically import kjv Bible from csv and store it in a sqlite db
 * Read a Bible by Version
 
