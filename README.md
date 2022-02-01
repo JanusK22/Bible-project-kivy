@@ -1,5 +1,5 @@
 # Bible-project-kivy
-A Ui Bible App base on Kivy ( The last Word)
+A Ui Bible App based on Kivy ( The last Word)
 
 Key Features : ( Till now)
 
